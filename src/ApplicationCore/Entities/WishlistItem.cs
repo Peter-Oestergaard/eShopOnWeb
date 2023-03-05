@@ -5,6 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Microsoft.eShopWeb.ApplicationCore.Entities;
-public class WishlistItem
+public class WishlistItem : BaseEntity
 {
 }

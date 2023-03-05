@@ -19,8 +19,6 @@ public class DeleteItemFromWishlist
     public async Task WhenRemovingItemFromWishlistService_ItemIsRemoved(int catalogItemId)
     {
         // Arrange
-        //var mockWishlist = new Mock<Wishlist>(_buyerId);
-        //var wishlist = mockWishlist.Object;
         var wishlist = new Wishlist(_buyerId);
         wishlist.AddItem(catalogItemId);
         Assert.Single(wishlist.Items);
@@ -41,8 +39,7 @@ public class DeleteItemFromWishlist
     public async Task WhenRemovingNonExistingItemFromWishlistService_ExceptionIsThrown(int catalogItemId)
     {
         // Arrange
-        var mockWishlist = new Mock<Wishlist>(_buyerId);
-        var wishlist = mockWishlist.Object;
+        var wishlist = new Wishlist(_buyerId);
         Assert.Empty(wishlist.Items);
         _mockWishlistRepo.Setup(x => x.FirstOrDefaultAsync(It.IsAny<WishlistWithItemsSpecification>(), default)).ReturnsAsync(wishlist);
         var wishlistService = new WishlistService(_mockWishlistRepo.Object, _mockLogger.Object);
@@ -53,19 +50,28 @@ public class DeleteItemFromWishlist
 
     [Theory]
     [ClassData(typeof(DeleteItemsDataGenerator))]
-    public async Task WhenRemovingSomeItemFromWishlistService_RestIsStillThere(List<int> catalogItemIds, List<int> itemsToRemove, List<int> remainingItems)
+    public async Task WhenRemovingSomeItemFromWishlistService_RestIsStillThere(List<int> catalogItemIds, List<int> itemsToRemoveIds, List<int> remainingItemsIds)
     {
-        /*
         // Arrange
-        var mockWishlist = new Mock<Wishlist>(_buyerId);
-        var wishlist = mockWishlist.Object;
-        Assert.Empty(wishlist.Items);
+        var wishlist = new Wishlist(_buyerId);
         _mockWishlistRepo.Setup(x => x.FirstOrDefaultAsync(It.IsAny<WishlistWithItemsSpecification>(), default)).ReturnsAsync(wishlist);
         var wishlistService = new WishlistService(_mockWishlistRepo.Object, _mockLogger.Object);
+        foreach (var id in catalogItemIds)
+        {
+            await wishlistService.AddItemToWishlist(wishlist.BuyerId, id);
+        }
+        Assert.Equal(catalogItemIds.Count, wishlist.Items.Count);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(() => wishlistService.RemoveItemFromWishlist(wishlist.BuyerId, catalogItemId));
-        */
-        Assert.True(true);
+        // Act
+        foreach (var id in itemsToRemoveIds)
+        {
+            await wishlistService.RemoveItemFromWishlist(wishlist.BuyerId, id);
+        }
+
+        // Assert
+        foreach (var id in remainingItemsIds)
+        {
+            Assert.Contains(wishlist.Items.Single(i => i.Id == id), wishlist.Items);
+        }
     }
 }
