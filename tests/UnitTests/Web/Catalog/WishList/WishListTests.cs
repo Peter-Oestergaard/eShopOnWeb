@@ -1,5 +1,9 @@
 ﻿using System;
 using BlazorShared.Models;
+using Microsoft.eShopWeb.ApplicationCore.Entities;
+using Microsoft.eShopWeb.ApplicationCore.Interfaces;
+using Microsoft.eShopWeb.ApplicationCore.Services;
+using Microsoft.eShopWeb.ApplicationCore.Specifications;
 using Microsoft.eShopWeb.UnitTests.Web.Catalog.WishList.TestData;
 using Microsoft.eShopWeb.Web.Interfaces;
 using Microsoft.eShopWeb.Web.Services;
@@ -7,16 +11,23 @@ using Microsoft.eShopWeb.Web.ViewModels;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
+using CatalogItem = Microsoft.eShopWeb.ApplicationCore.Entities.CatalogItem;
 
 namespace Microsoft.eShopWeb.UnitTests.Web.Catalog.WishList
 {
     public class WishListTests
     {
         private readonly ICatalogItemViewModelService _catalogItemViewModelService;
+        /* private readonly int Id = 1;
+         private readonly string? Name = "Item Name";
+         private readonly decimal Price = 55.5M;
+         private readonly string? PictureUri = "PeactureUrl";*/
+        private readonly Mock<IRepository<CatalogItem>> _mockcatalogItemRepository = new();
 
-        public WishListTests(ICatalogItemViewModelService catalogItemViewModelService)
+        public WishListTests()
         {
-            _catalogItemViewModelService = catalogItemViewModelService;
+            _catalogItemViewModelService = new CatalogItemViewModelService(_mockcatalogItemRepository.Object);
+
         }
         [Fact]
         public void AddCatalogItem_ShouldAddCatalogItemToWishList()
